@@ -1,5 +1,6 @@
 import random
 import math
+import sys
 
 #
 # Shorthand:
@@ -20,7 +21,8 @@ import math
 class NeuralNetwork:
     LEARNING_RATE = 0.5
 
-    def __init__(self, num_inputs, num_hidden, num_outputs, hidden_layer_weights = None, hidden_layer_bias = None, output_layer_weights = None, output_layer_bias = None):
+    def __init__(self, num_inputs, num_hidden, num_outputs, hidden_layer_weights = None,
+        hidden_layer_bias = None, output_layer_weights = None, output_layer_bias = None):
         self.num_inputs = num_inputs
 
         self.hidden_layer = NeuronLayer(num_hidden, hidden_layer_bias)
@@ -74,6 +76,7 @@ class NeuralNetwork:
 
             # ∂E/∂zⱼ
             pd_errors_wrt_output_neuron_total_net_input[o] = self.output_layer.neurons[o].calculate_pd_error_wrt_total_net_input(training_outputs[o])
+            self.output_layer.neurons[o].calculate_pd_error_wrt_total_net_input(training_outputs[o])
 
         # 2. Hidden neuron deltas
         pd_errors_wrt_hidden_neuron_total_net_input = [0] * len(self.hidden_layer.neurons)
@@ -214,26 +217,52 @@ class Neuron:
     def calculate_pd_total_net_input_wrt_weight(self, index):
         return self.inputs[index]
 
-###
+class Generate():
+    def __init__ (self, numOfGood, numOfBad):
+        self.table =  [[[],[]],] * (numOfGood + numOfBad)
+        for a in range(numOfGood):
+            self.table[a] = [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],[1]
+            x = random.randint(0, 24)
+            if self.table[a][0][x] == 1:
+                self.table[a][0][x] = 0
+            else:
+                self.table[a][0][x] = 1
+        for a in range(numOfBad):
+            self.table[a+numOfGood] = [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],[0]
+            for b in range(random.randint(2, 9)):
+                x = random.randint(0, 24)
+                if self.table[a+numOfGood][0][x] == 1:
+                    self.table[a+numOfGood][0][x] = 0
+                else:
+                    self.table[a+numOfGood][0][x] = 1
 
-# Blog post example:
-
-nn = NeuralNetwork(2, 2, 2, hidden_layer_weights=[0.15, 0.2, 0.25, 0.3], hidden_layer_bias=0.35, output_layer_weights=[0.4, 0.45, 0.5, 0.55], output_layer_bias=0.6)
-for i in range(10000):
-    nn.train([0.05, 0.1], [0.01, 0.99])
-    print(i, round(nn.calculate_total_error([[[0.05, 0.1], [0.01, 0.99]]]), 9))
-
-# XOR example:
-
-# training_sets = [
-#     [[0, 0], [0]],
-#     [[0, 1], [1]],
-#     [[1, 0], [1]],
-#     [[1, 1], [0]]
-# ]
-
-# nn = NeuralNetwork(len(training_sets[0][0]), 5, len(training_sets[0][1]))
-# for i in range(10000):
-#     training_inputs, training_outputs = random.choice(training_sets)
-#     nn.train(training_inputs, training_outputs)
-#     print(i, nn.calculate_total_error(training_sets))
+if __name__ == "__main__":
+    generator = Generate(25, 100)
+    training_sets = generator.table
+    '''training_sets = [
+        [[1, 1,	0, 0, 0, 0,	0, 0, 0, 0], [1]],
+        [[0, 1,	1, 0, 0, 0,	0, 0, 0, 0], [1]],
+        [[0, 0,	0, 0, 0, 0,	0, 0, 1, 1], [1]],
+        [[0, 0,	0, 0, 0, 0,	0, 1, 1, 0], [1]],
+        [[0, 0,	0, 0, 0, 0,	1, 1, 0, 0], [1]],
+        [[0, 0,	0, 0, 0, 1,	1, 0, 0, 0], [1]],
+        [[0, 0,	0, 0, 1, 1,	0, 0, 0, 0], [1]],
+        [[0, 0,	0, 1, 1, 0,	0, 0, 0, 0], [1]],
+        [[0, 0,	1, 1, 0, 0,	0, 0, 0, 0], [1]],
+        [[0, 0,	0, 0, 0, 0,	0, 0, 0, 0], [0]],
+        [[1, 0,	1, 0, 1, 0,	1, 0, 1, 0], [0]],
+        [[0, 1,	0, 1, 0, 1,	0, 1, 0, 1], [0]],
+        [[1, 0,	1, 0, 1, 1,	1, 0, 1, 0], [0]],
+        [[0, 0,	0, 0, 1, 0,	0, 0, 1, 0], [0]],
+        [[1, 1,	1, 1, 0, 1,	1, 1, 0, 1], [0]],
+        [[1, 1,	1, 1, 0, 1,	0, 0, 0, 0], [0]],
+        [[0, 1,	0, 0, 0, 0,	0, 0, 0, 0], [0]]
+]'''
+    nn = NeuralNetwork(len(training_sets[0][0]), 20, len(training_sets[0][1]))
+    for i in range(int(sys.argv[1])):
+        training_inputs, training_outputs = training_sets[random.randint(0, (len(training_sets) - 1))]
+        nn.train(training_inputs, training_outputs)
+    #print('end')
+    #while True:
+    #    a = list(map(float, input().split()))
+    #    print(nn.feed_forward(a))
