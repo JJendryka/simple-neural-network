@@ -239,30 +239,12 @@ class Generate():
 if __name__ == "__main__":
     generator = Generate(25, 100)
     training_sets = generator.table
-    '''training_sets = [
-        [[1, 1,	0, 0, 0, 0,	0, 0, 0, 0], [1]],
-        [[0, 1,	1, 0, 0, 0,	0, 0, 0, 0], [1]],
-        [[0, 0,	0, 0, 0, 0,	0, 0, 1, 1], [1]],
-        [[0, 0,	0, 0, 0, 0,	0, 1, 1, 0], [1]],
-        [[0, 0,	0, 0, 0, 0,	1, 1, 0, 0], [1]],
-        [[0, 0,	0, 0, 0, 1,	1, 0, 0, 0], [1]],
-        [[0, 0,	0, 0, 1, 1,	0, 0, 0, 0], [1]],
-        [[0, 0,	0, 1, 1, 0,	0, 0, 0, 0], [1]],
-        [[0, 0,	1, 1, 0, 0,	0, 0, 0, 0], [1]],
-        [[0, 0,	0, 0, 0, 0,	0, 0, 0, 0], [0]],
-        [[1, 0,	1, 0, 1, 0,	1, 0, 1, 0], [0]],
-        [[0, 1,	0, 1, 0, 1,	0, 1, 0, 1], [0]],
-        [[1, 0,	1, 0, 1, 1,	1, 0, 1, 0], [0]],
-        [[0, 0,	0, 0, 1, 0,	0, 0, 1, 0], [0]],
-        [[1, 1,	1, 1, 0, 1,	1, 1, 0, 1], [0]],
-        [[1, 1,	1, 1, 0, 1,	0, 0, 0, 0], [0]],
-        [[0, 1,	0, 0, 0, 0,	0, 0, 0, 0], [0]]
-]'''
+
     nn = NeuralNetwork(len(training_sets[0][0]), 20, len(training_sets[0][1]))
     for i in range(int(sys.argv[1])):
         training_inputs, training_outputs = training_sets[random.randint(0, (len(training_sets) - 1))]
         nn.train(training_inputs, training_outputs)
-    #print('end')
-    #while True:
-    #    a = list(map(float, input().split()))
-    #    print(nn.feed_forward(a))
+    print('end')
+    while True:
+        a = list(map(float, input().split()))
+        print(nn.feed_forward(a))
